@@ -1,108 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <style>
-        @font-face {
-            font-family: 'Kanit';
-            src: url(./Kanit/Kanit-Regular.ttf);
-        }
-
-        body {
-            font-family: 'Kanit';
-        }
-
-        .container {
-            width: 400px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .header {
-            font-size: 30px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .header-form {
-            width: 200px;
-        }
-
-        .flex {
-            display: flex;
-        }
-
-        .form-input {
-            margin-bottom: 10px;
-        }
-
-        input.form,
-        textarea {
-            border: 1px solid gray;
-            width: 100%;
-        }
-
-        .center {
-            text-align: center;
-        }
-
-        .button {
-            border: 10%;
-            width: 100%;
-            height: 40px;
-        }
-    </style>
+    <link rel = "stylesheet" href = "style.css">
 </head>
-
 <body>
     <div class="container">
-        <div class="header">
-            register form
-        </div>
-
-        <div class="flex form-input">
-            <span class="header-form" type="text">ชื่อ</span>
-            <input class="form" type="text">
+        <div class ="header" > 
+            Register From 
         </div>
         <div class="flex form-input">
-            <span class="header-form" type="text">นามสกุล</span>
-            <input class="form" type="text"><br>
+            <div class="header-form">ชื่อ</div>
+            <input class="form" name="firstname" type="text"> 
         </div>
         <div class="flex form-input">
-            <div class="header-form">อายุ</div><input class="form" type="number" min="0" max="100">
+            <div class="header-form">นามสกุล</div>
+            <input class="form"name="lastname" type="text"> 
         </div>
+        <div class="flex form-input">
+            <div class="header-form">อายุ</div>
+            <input class="form" name="age"type="number" min = " 0"max = "100">
+        </div>
+    
+        <div class=" flex gender form-input">
+           <div class="header-form">เพศ</div>
+           <div class = flex>
+            <div>
+               <input  name = "gender" type="radio" value="ชาย"> ชาย
+            </div>
+            <div>
+               <input name = "gender" type="radio" value="หญิง"> หญิง
+            </div>
+            <div>
+               <input  name = "gender" type="radio" value="อื่นๆ"> อื่นๆ
+            </div>
+           </div>
+        </div>
+           <div class="form-input">
+            <div class="header-form">งานอดิเรก</div>
+            <div>
+                <input  name = "interest" type="checkbox" value ="อ่านหนังสือ"> อ่านหนังสือ
+            </div>
+            <div>
+                <input name = "interest" type="checkbox" value="ดูหนัง"> ดูหนัง
+            </div>
+            <div>
+                <input  name = "interest" type="checkbox" value="ฟังเพลง"> ฟังเพลง
+            </div>
+            </div>
+            <div class="form-input">
+               คำอธิบาย
+            <textarea name="description"></textarea>
+            </div>
 
-        <div class="flex gender form-input">
-            <div class="header-form">เพศ</div>
-            <div>
-                <input name="gender" type="radio">ชาย
-                <input name="gender" type="radio">หญิง
-                <input name="gender" type="radio">อื่นๆ
-            </div>
-        </div>
+            <div id= message class="message"></div>
 
-        <div class="form-input">
-            งานอดิเรก
-            <div>
-                <input name="interest" type="checkbox">อ่านหนังสือ
+            <div class="center">
+                <button  onclick="submitData()" class ="button">ส่งข้อมูล</button>
             </div>
-            <div>
-                <input name="interest" type="checkbox">ดูหนัง
-            </div>
-            <div>
-                <input name="interest" type="checkbox">ฟังเพลง
-            </div>
-        </div>
-        <div class="form-input">
-            คำอธิบาย
-            <textarea></textarea>
-        </div>
-        <div class="center">
-            <button class="button">ส่งข้อมูล</button>
-        </div>
-</body>
-
+    </div>    
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+    <script src="index.js"></script>    
+    </body>
 </html>

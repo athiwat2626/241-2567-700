@@ -1,84 +1,90 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const mysql = require('mysql2/promise');
-const app = express();
+const validateData = (userData) => {
+let errors = []
 
-const port = 8000;
-
-app.use(bodyParser.json());
-
-let users = []
-
-let conn = null
-const initMySQL = async () => {
-    conn = await mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: 'root',
-        database: 'webdb',
-        port: 8850
-    })
+ if (!userData.firstname){
+    errors.push('กรุณากรอกชื่อ')
+  }
+  if (!userData.lastname){
+    errors.push('กรุณากรอกนามสกุล')
+  }
+  if (!userData.age){
+    errors.push('กรุณากรอกอายุ')
+  }
+  if (!userData.gender){
+    errors.push('กรุณากรอกเพศ')
+  }
+  if (!userData.interests){
+    errors.push('กรุณากรอกคสามสนใจ')
+  }
+  if (!userData.description){
+    errors.push('กรุณากรอกคำอธิบาย')
+  }
+  return errors
 }
 
-// path = GET /users สำหรับ get user ทั้งหมดที่บันทีกไว้
-app.get('/users', async (req, res) => {
-    const result = await conn.query('SELECT * FROM users')
-    res.json(result[0])
-})
+   
+    const submitData =  async () => {
+    let firstNameDOM = document.querySelector('input[name=firstname]');
+    let lastNameDOM = document.querySelector('input[name=lastname]');
+    let ageDOM = document.querySelector('input[name=age]');
+    let genderDOM = document.querySelector('input[name=gender]:checked') || {}
+    let interestDOMs = document.querySelectorAll('input[name=interest]:checked') || {}
+    let descriptionDOM = document.querySelector('textarea[name=description]');
 
+    let messageDOM = document.getElementById('message');
 
-// path = post /user ใช้สำหรับสร้างข้อมูล user ใหม่
-
-app.post('/users', async(req, res) => { 
-    let user = req.body;
-    const result = conn.query('INSERT INTO user SET ?',   users) 
-    console.log ('results', result)
-    res.json({
-        message: 'Create user successfully',
-        data: result[0]
-    })
-
-})
-
-
-
-// path = GET /users สำหรับ get user ทั้งหมดที่บันทีกไว้
-app.get('/users/: id', (req, res) => {
-    let id = req.params.id;
-    let selectedUser = users.find(user => user.id == id);
-
-    res.json(users[selectedIndex]);
-})
-
-
-// path:PUT /users/:id ใช้สำหรับเเก้ไขข้อมูล user โดยใช้ id เป็นตัวระบุ
-// get post put ใช้ได้หมด
-app.put('/users/:id', (req, res) => {
-    let id = req.params.id; 
-    let updateUser = req.body;
-    let selectedIndex = users.findIndex(user => user.id == id );
-    
-        users[selectedIndex].firstname = updateUser.firstname || users[selectedIndex].firstname;
-        users[selectedIndex].lastname = updateUser.lastname || users[selectedIndex].lastname;
-        users[selectedIndex].age = updateUser.age || users[selectedIndex].age;
-        users[selectedIndex].gender = updateUser.gender || users[selectedIndex].gender
-    
-    res.json({
-        message: 'Update user successfully',
-        data:{
-            user: updateUser,
-            indexUpdated : selectedIndex
+    try{
+    let interest = '';
+    for (let i = 0; i < interestDOMs.length; i++) {
+        interest += interestDOMs[i].value 
+        if (i < interestDOMs.length - 1) {
+            interest += ',';
         }
-    }) 
-    res.send(id) 
-})
+    }
 
-//path: DELETE /user/:id ใช้สำหรับลบข้อมูล user โดยใช้ id เป็นตัวระบุ
-app.delete('/users/:id', (req, res) => {
-    let id = req.params.id;
-    let selectedIndex = users.findIndex(user => user.id == id);})
+    let userData = {
+        firstName: firstNameDOM.value,
+        lastName:  lastNameDOM.value,
+        age: ageDOM.value,
+        gender: genderDOM.value,
+        description: descriptionDOM.value,
+        interests: interest
+    }
+    console.log('submitData',userData);
+    
+    /*const errors = validateData(userData)
+    if(errors.length > 0 ) {
+        throw {
+            message : 'กรุณากรอกข้อมูลให้ครบถ้วน',
+            errors: errors
+        }
+    }
+        */
 
-app.listen(port, async () => {
-    await initMySQL();
-    console.log('HTTP Server is running on port '+{port});
-});
+    const response = await axios.post('http://localhost:8000/users',userData)
+    console.log('response',response.data);
+    messageDOM.innerText = 'บันทึกข้อมูลเรียบร้อย'
+    messageDOM.className = 'message success'
+} catch (error) {
+    console.log('error message',error.message);
+    console.log('error',error.errors);
+    
+    if (error.response){
+        console.log('error',error.response.data.message)
+        error.message = error.response.data.message
+        error.errors = error.response.data.errors
+        }
+        
+       let htmlData = '<div>'
+       htmlData += `<div> ${error.message} <div>`
+       htmlData += '<ul>'
+       for (let i = 0; i < error.errors.length; i++){
+       htmlData += `<li>${error.errors[i]}<li>` 
+       }
+       htmlData +='</ul>'
+       htmlData +='</div>'
+
+    messageDOM.innerText = 'บันทึกข้อมูลไม่สำเร็จ'
+    messageDOM.className = 'message danger'
+    }
+}
